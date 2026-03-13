@@ -7,19 +7,24 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.Alignment
+import com.example.movieverse.model.Movie
+import com.example.movieverse.model.MovieSource
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -28,102 +33,119 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-data class Movie(
-    val title: String,
-    val year: String,
-    val rating: String,
-    val imageRes: Int,
-    var isFavorite: Boolean = false
-)
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieVerseApp() {
 
-    var movieList by remember {
-        mutableStateOf(
-            listOf(
-                Movie("interstellar", "2014", "⭐ 4.9", R.drawable.interstellar),
-                Movie("avengers_endgame", "2023", "⭐ 4.8", R.drawable.avengers_endgame),
-                Movie("fastx", "2019", "⭐ 4.3", R.drawable.fastx)
-            )
-        )
-    }
+    val movieList = MovieSource.movieList
+    var searchText by remember { mutableStateOf("") }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("MovieVerse") }
-            )
-            Text(
-                text = "By Mohamad Farrel Pratama | 2477051014",
-                fontSize = 12.sp
-            )
-        }
-    ) { paddingValues ->
 
-        LazyColumn(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { },
+                containerColor = Color.Red
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Tambah Film")
+            }
+        }
+
+    ) { padding ->
+
+        Column(
             modifier = Modifier
-                .padding(paddingValues)
+                .fillMaxSize()
+                .padding(padding)
                 .padding(16.dp)
         ) {
-            items(movieList) { movie ->
-                MovieItem(
-                    movie = movie,
-                    onFavoriteClick = {
-                        movie.isFavorite = !movie.isFavorite
-                    }
-                )
+
+
+            Text(
+                text = "🎬 MovieVerse",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = searchText,
+                onValueChange = { searchText = it },
+                placeholder = { Text("Cari film...") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            LazyColumn {
+
+                items(movieList) { movie ->
+                    MovieItem(movie)
+                }
+
             }
+
         }
     }
 }
 
 @Composable
-fun MovieItem(
-    movie: Movie,
-    onFavoriteClick: () -> Unit
-) {
+fun MovieItem(movie: Movie) {
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 12.dp),
-        elevation = CardDefaults.cardElevation(6.dp)
+            .padding(bottom = 20.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(8.dp)
     ) {
-        Row(
-            modifier = Modifier.padding(12.dp)
-        ) {
+
+        Column {
 
             Image(
                 painter = painterResource(id = movie.imageRes),
                 contentDescription = movie.title,
-                modifier = Modifier.size(100.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
                 contentScale = ContentScale.Crop
             )
 
-            Spacer(modifier = Modifier.width(12.dp))
-
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.padding(16.dp)
             ) {
+
                 Text(
                     text = movie.title,
-                    fontSize = 18.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold
                 )
-                Text(text = "Tahun: ${movie.year}")
-                Text(text = "Rating: ${movie.rating}")
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = "Tahun: ${movie.year}",
+                    color = Color.Gray
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = "⭐ ${movie.rating}"
+                )
+
+                Spacer(modifier = Modifier.height(14.dp))
+
+                Button(
+                    onClick = { },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Tonton Sekarang")
+                }
+
             }
 
-            IconButton(onClick = { onFavoriteClick() }) {
-                Icon(
-                    imageVector = if (movie.isFavorite)
-                        Icons.Default.Favorite
-                    else
-                        Icons.Default.FavoriteBorder,
-                    contentDescription = "Favorite"
-                )
-            }
         }
     }
 }
