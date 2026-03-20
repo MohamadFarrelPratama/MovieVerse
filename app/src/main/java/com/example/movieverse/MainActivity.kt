@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -38,6 +39,9 @@ fun MovieVerseApp() {
 
     val movieList = MovieSource.movieList
     var searchText by remember { mutableStateOf("") }
+    val filteredList = movieList.filter {
+        it.title.contains(searchText, ignoreCase = true) }
+
 
     Scaffold(
 
@@ -80,7 +84,7 @@ fun MovieVerseApp() {
 
             LazyColumn {
 
-                items(movieList) { movie ->
+                items(filteredList) { movie ->
                     MovieItem(movie)
                 }
 
@@ -93,6 +97,8 @@ fun MovieVerseApp() {
 @Composable
 fun MovieItem(movie: Movie) {
 
+    var isFavorite by remember { mutableStateOf(false) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -103,15 +109,42 @@ fun MovieItem(movie: Movie) {
 
         Column {
 
-            Image(
-                painter = painterResource(id = movie.imageRes),
-                contentDescription = movie.title,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
-                contentScale = ContentScale.Crop
-            )
+            Box {
 
+                Image(
+                    painter = painterResource(id = movie.imageRes),
+                    contentDescription = movie.title,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentScale = ContentScale.Crop
+                )
+
+                // ❤️ ICON FAVORITE DI ATAS
+                IconButton(
+                    onClick = {
+                        isFavorite = !isFavorite
+                    },
+                    modifier = Modifier.align(Alignment.TopEnd)
+                ) {
+
+                    Icon(
+                        imageVector =
+                            if (isFavorite)
+                                Icons.Default.FavoriteBorder
+                            else
+                                Icons.Default.FavoriteBorder,
+                        contentDescription = "Favorite",
+                        tint =
+                            if (isFavorite)
+                                Color.Red
+                            else
+                                Color.White
+                    )
+                }
+            }
+
+            // TEXT
             Column(
                 modifier = Modifier.padding(16.dp)
             ) {
@@ -135,7 +168,7 @@ fun MovieItem(movie: Movie) {
                     text = "⭐ ${movie.rating}"
                 )
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 Button(
                     onClick = { },
@@ -143,9 +176,7 @@ fun MovieItem(movie: Movie) {
                 ) {
                     Text("Tonton Sekarang")
                 }
-
             }
-
         }
     }
 }
