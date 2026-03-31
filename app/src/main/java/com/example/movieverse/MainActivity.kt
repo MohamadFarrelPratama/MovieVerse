@@ -5,12 +5,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -25,7 +25,6 @@ import com.example.movieverse.model.Movie
 import com.example.movieverse.model.MovieSource
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -39,9 +38,10 @@ fun MovieVerseApp() {
 
     val movieList = MovieSource.movieList
     var searchText by remember { mutableStateOf("") }
-    val filteredList = movieList.filter {
-        it.title.contains(searchText, ignoreCase = true) }
 
+    val filteredList = movieList.filter {
+        it.title.contains(searchText, ignoreCase = true)
+    }
 
     Scaffold(
 
@@ -56,40 +56,100 @@ fun MovieVerseApp() {
 
     ) { padding ->
 
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .padding(16.dp)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
+            item {
 
-            Text(
-                text = "🎬 MovieVerse",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold
-            )
+                Column {
 
-            Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = "🎬 MovieVerse",
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold
+                    )
 
-            OutlinedTextField(
-                value = searchText,
-                onValueChange = { searchText = it },
-                placeholder = { Text("Cari film...") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp)
-            )
+                    Spacer(modifier = Modifier.height(12.dp))
 
-            Spacer(modifier = Modifier.height(20.dp))
+                    OutlinedTextField(
+                        value = searchText,
+                        onValueChange = { searchText = it },
+                        placeholder = { Text("Cari film...") },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    )
 
-            LazyColumn {
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                items(filteredList) { movie ->
-                    MovieItem(movie)
+                    Text(
+                        text = "Rekomendasi",
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(movieList) { movie ->
+                            MovieRowItem(movie)
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(
+                        text = "Daftar Film",
+                        fontWeight = FontWeight.Bold
+                    )
                 }
-
             }
 
+            items(filteredList) { movie ->
+                MovieItem(movie)
+            }
+        }
+    }
+}
+
+@Composable
+fun MovieRowItem(movie: Movie) {
+
+    Card(
+        modifier = Modifier.width(140.dp),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(4.dp)
+    ) {
+
+        Column {
+
+            Image(
+                painter = painterResource(id = movie.imageRes),
+                contentDescription = movie.title,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp),
+                contentScale = ContentScale.Crop
+            )
+
+            Column(modifier = Modifier.padding(8.dp)) {
+
+                Text(
+                    text = movie.title,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+                )
+
+                Text(
+                    text = "⭐ ${movie.rating}",
+                    fontSize = 12.sp
+                )
+            }
         }
     }
 }
@@ -100,9 +160,7 @@ fun MovieItem(movie: Movie) {
     var isFavorite by remember { mutableStateOf(false) }
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 20.dp),
+        modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(8.dp)
     ) {
@@ -120,34 +178,25 @@ fun MovieItem(movie: Movie) {
                     contentScale = ContentScale.Crop
                 )
 
-                // ❤️ ICON FAVORITE DI ATAS
                 IconButton(
-                    onClick = {
-                        isFavorite = !isFavorite
-                    },
+                    onClick = { isFavorite = !isFavorite },
                     modifier = Modifier.align(Alignment.TopEnd)
                 ) {
-
                     Icon(
                         imageVector =
                             if (isFavorite)
-                                Icons.Default.FavoriteBorder
+                                Icons.Filled.Favorite
                             else
-                                Icons.Default.FavoriteBorder,
+                                Icons.Outlined.FavoriteBorder,
                         contentDescription = "Favorite",
                         tint =
-                            if (isFavorite)
-                                Color.Red
-                            else
-                                Color.White
+                            if (isFavorite) Color.Red
+                            else Color.White
                     )
                 }
             }
 
-            // TEXT
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
+            Column(modifier = Modifier.padding(16.dp)) {
 
                 Text(
                     text = movie.title,
@@ -164,9 +213,7 @@ fun MovieItem(movie: Movie) {
 
                 Spacer(modifier = Modifier.height(6.dp))
 
-                Text(
-                    text = "⭐ ${movie.rating}"
-                )
+                Text(text = "⭐ ${movie.rating}")
 
                 Spacer(modifier = Modifier.height(12.dp))
 
