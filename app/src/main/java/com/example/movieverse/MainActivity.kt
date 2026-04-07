@@ -4,32 +4,32 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.movieverse.model.Movie
 import com.example.movieverse.model.MovieSource
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            MovieVerseApp()
-        }
+        setContent { MovieVerseApp() }
     }
 }
 
@@ -37,192 +37,153 @@ class MainActivity : ComponentActivity() {
 fun MovieVerseApp() {
 
     val movieList = MovieSource.movieList
-    var searchText by remember { mutableStateOf("") }
 
-    val filteredList = movieList.filter {
-        it.title.contains(searchText, ignoreCase = true)
-    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black)
+            .padding(16.dp)
+    ) {
 
-    Scaffold(
+        Text(
+            text = "🎬 MovieVerse",
+            color = Color.White,
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold
+        )
 
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { },
-                containerColor = Color.Red
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Tambah Film")
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Rekomendasi",
+            color = Color.White,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold
+        )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Row(
+            modifier = Modifier
+                .horizontalScroll(rememberScrollState())
+        ) {
+            movieList.forEach { movie ->
+                MovieCardHorizontal(movie)
             }
         }
 
-    ) { padding ->
+        Spacer(modifier = Modifier.height(20.dp))
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+        Text(
+            text = "Daftar Film",
+            color = Color.White,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.SemiBold
+        )
 
-            item {
+        Spacer(modifier = Modifier.height(10.dp))
 
-                Column {
-
-                    Text(
-                        text = "🎬 MovieVerse",
-                        fontSize = 28.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    OutlinedTextField(
-                        value = searchText,
-                        onValueChange = { searchText = it },
-                        placeholder = { Text("Cari film...") },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp)
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = "Rekomendasi",
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
-                    ) {
-                        items(movieList) { movie ->
-                            MovieRowItem(movie)
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = "Daftar Film",
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-            }
-
-            items(filteredList) { movie ->
-                MovieItem(movie)
+        LazyColumn {
+            items(movieList) { movie ->
+                MovieCardVertical(movie)
             }
         }
     }
 }
 
 @Composable
-fun MovieRowItem(movie: Movie) {
-
+fun MovieCardHorizontal(movie: Movie) {
     Card(
-        modifier = Modifier.width(140.dp),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
+        modifier = Modifier
+            .width(140.dp)
+            .padding(end = 12.dp),
+        shape = RoundedCornerShape(12.dp)
     ) {
-
         Column {
-
             Image(
-                painter = painterResource(id = movie.imageRes),
+                painter = painterResource(movie.imageRes),
                 contentDescription = movie.title,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp),
+                modifier = Modifier.height(180.dp),
                 contentScale = ContentScale.Crop
             )
 
             Column(modifier = Modifier.padding(8.dp)) {
+                Text(movie.title, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text("⭐ ${movie.rating}", fontSize = 12.sp)
+            }
+        }
+    }
+}
+
+@Composable
+fun MovieCardVertical(movie: Movie) {
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+
+        Column {
+            Column(modifier = Modifier.padding(12.dp)) {
 
                 Text(
                     text = movie.title,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp
+                    fontSize = 18.sp,
+                    color = Color.Black
+                )
+
+                Text(
+                    text = "Tahun: ${movie.year}",
+                    fontSize = 12.sp
                 )
 
                 Text(
                     text = "⭐ ${movie.rating}",
                     fontSize = 12.sp
                 )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Text(
+                    text = movie.desc,
+                    fontSize = 13.sp,
+                    color = Color.DarkGray,
+                    maxLines = 3
+                )
             }
-        }
-    }
-}
-
-@Composable
-fun MovieItem(movie: Movie) {
-
-    var isFavorite by remember { mutableStateOf(false) }
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(8.dp)
-    ) {
-
-        Column {
 
             Box {
-
                 Image(
-                    painter = painterResource(id = movie.imageRes),
+                    painter = painterResource(movie.imageRes),
                     contentDescription = movie.title,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    alignment = Alignment.TopCenter
                 )
-
-                IconButton(
-                    onClick = { isFavorite = !isFavorite },
-                    modifier = Modifier.align(Alignment.TopEnd)
-                ) {
-                    Icon(
-                        imageVector =
-                            if (isFavorite)
-                                Icons.Filled.Favorite
-                            else
-                                Icons.Outlined.FavoriteBorder,
-                        contentDescription = "Favorite",
-                        tint =
-                            if (isFavorite) Color.Red
-                            else Color.White
-                    )
-                }
-            }
-
-            Column(modifier = Modifier.padding(16.dp)) {
-
-                Text(
-                    text = movie.title,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Text(
-                    text = "Tahun: ${movie.year}",
-                    color = Color.Gray
-                )
-
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Text(text = "⭐ ${movie.rating}")
-
-                Spacer(modifier = Modifier.height(12.dp))
 
                 Button(
                     onClick = { },
-                    modifier = Modifier.fillMaxWidth()
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(12.dp)
                 ) {
-                    Text("Tonton Sekarang")
+                    Icon(Icons.Default.PlayArrow, contentDescription = null)
+                    Text("Tonton")
                 }
+            }
+
+            Column(modifier = Modifier.padding(12.dp)) {
+                Text(movie.title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text("Tahun: ${movie.year}", fontSize = 12.sp)
+                Text("⭐ ${movie.rating}", fontSize = 12.sp)
+                Spacer(modifier = Modifier.height(6.dp))
+                Text(movie.desc, fontSize = 12.sp, maxLines = 2)
             }
         }
     }
