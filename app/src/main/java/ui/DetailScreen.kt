@@ -1,6 +1,5 @@
 package com.example.movieverse.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -12,11 +11,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.movieverse.model.Movie
+import coil.compose.AsyncImage
 
 @Composable
 fun DetailScreen(
@@ -31,14 +30,15 @@ fun DetailScreen(
     ) {
 
         Box {
-
-            Image(
-                painter = painterResource(movie.imageRes),
+            AsyncImage(
+                model = movie.imageUrl,
                 contentDescription = movie.title,
+
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(300.dp),
-                contentScale = ContentScale.FillWidth
+
+                contentScale = ContentScale.Crop
             )
 
             IconButton(

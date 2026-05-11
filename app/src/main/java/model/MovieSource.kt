@@ -1,7 +1,5 @@
 package com.example.movieverse.model
 
-import com.example.movieverse.R
-
 object MovieSource {
 
     val movieList = listOf(
@@ -9,25 +7,26 @@ object MovieSource {
         Movie(
             title = "Interstellar",
             year = "2014",
-            rating = "4.9",
-            imageRes = R.drawable.interstellar,
-            desc = "Film sci-fi tentang perjalanan luar angkasa untuk menyelamatkan manusia."
+            rating = "8.6",
+            imageUrl = "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+            desc = "Film sci-fi tentang perjalanan luar angkasa untuk menyelamatkan umat manusia."
         ),
 
         Movie(
-            title = "Avengers Endgame",
+            title = "Avengers: Endgame",
             year = "2019",
-            rating = "4.8",
-            imageRes = R.drawable.avengers_endgame,
-            desc = "Para Avengers bersatu melawan Thanos dalam pertarungan terakhir."
+            rating = "8.4",
+            imageUrl = "https://image.tmdb.org/t/p/w500/or06FN3Dka5tukK1e9sl16pB3iy.jpg",
+            desc = "Para Avengers bersatu kembali untuk mengalahkan Thanos dan mengembalikan alam semesta."
         ),
 
         Movie(
             title = "Fast X",
             year = "2023",
-            rating = "4.3",
-            imageRes = R.drawable.fastx,
-            desc = "Aksi balapan dan misi berbahaya dari Dom dan timnya."
+            rating = "7.2",
+            imageUrl = "https://image.tmdb.org/t/p/w500/fiVW06jE7z9YnO4trhaMEdclSiC.jpg",
+            desc = "Dom Toretto dan keluarganya menghadapi ancaman baru yang berbahaya."
         )
+
     )
 }

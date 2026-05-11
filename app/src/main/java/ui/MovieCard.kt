@@ -1,6 +1,5 @@
 package com.example.movieverse.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -17,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.example.movieverse.model.Movie
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import coil.compose.AsyncImage
 
 @Composable
 fun MovieCardVertical(
@@ -38,13 +38,13 @@ fun MovieCardVertical(
             Column {
 
                 Box {
-                    Image(
-                        painter = painterResource(movie.imageRes),
+                    AsyncImage(
+                        model = movie.imageUrl,
                         contentDescription = movie.title,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(200.dp),
-                        contentScale = ContentScale.FillWidth
+                            .height(220.dp),
+                        contentScale = ContentScale.Crop
                     )
 
                     Button(
@@ -104,11 +104,15 @@ fun MovieCardHorizontal(movie: Movie) {
         shape = RoundedCornerShape(12.dp)
     ) {
         Column {
-            Image(
-                painter = painterResource(movie.imageRes),
+            AsyncImage(
+                model = movie.imageUrl,
                 contentDescription = movie.title,
-                modifier = Modifier.height(180.dp),
-                contentScale = ContentScale.FillWidth
+
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(300.dp),
+
+                contentScale = ContentScale.Crop
             )
 
             Column(modifier = Modifier.padding(8.dp)) {
