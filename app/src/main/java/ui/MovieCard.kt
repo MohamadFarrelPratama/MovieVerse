@@ -17,6 +17,7 @@ import com.example.movieverse.model.Movie
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import coil.compose.AsyncImage
+import androidx.compose.foundation.clickable
 
 @Composable
 fun MovieCardVertical(

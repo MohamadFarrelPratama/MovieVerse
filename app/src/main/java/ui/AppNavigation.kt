@@ -1,9 +1,7 @@
 package com.example.movieverse.ui
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.*
 import com.example.movieverse.model.MovieSource
 
 @Composable
@@ -16,25 +14,23 @@ fun AppNavigation() {
         startDestination = "home"
     ) {
 
-        // ================= HOME SCREEN =================
-
+        // HOME
         composable("home") {
 
             MovieScreen(
-
-                // true = tampil error screen
-                // false = tampil normal
                 isError = false,
 
                 onMovieClick = { index ->
-
                     navController.navigate("detail/$index")
+                },
+
+                onAboutClick = {
+                    navController.navigate("about")
                 }
             )
         }
 
-        // ================= DETAIL SCREEN =================
-
+        // DETAIL
         composable("detail/{index}") { backStackEntry ->
 
             val index = backStackEntry.arguments
@@ -45,6 +41,16 @@ fun AppNavigation() {
 
             DetailScreen(
                 movie = movie,
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // ABOUT
+        composable("about") {
+
+            AboutScreen(
                 onBackClick = {
                     navController.popBackStack()
                 }
